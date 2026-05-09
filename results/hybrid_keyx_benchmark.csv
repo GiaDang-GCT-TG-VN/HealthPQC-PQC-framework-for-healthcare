@@ -1,0 +1,4 @@
+scenario,avg_ms,p50_ms,p95_ms,p99_ms,key_bytes,output_bytes,note
+Classical only (X25519),0.2564,0.2411,0.2896,0.3272,32,32,Current standard — quantum-vulnerable to Shor's algorithm
+PQC only (ML-KEM-768),0.045,0.0417,0.0518,0.064,1184,1088,"FIPS 203 — fully quantum safe, drops classical fallback"
+Hybrid (X25519 + ML-KEM-768 + HKDF),0.3843,0.3785,0.436,0.4892,1216,1120,NIST/IETF recommended — safe if EITHER algorithm holds

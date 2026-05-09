@@ -1,0 +1,26 @@
+# HealthPQC Crypto Configuration
+# Change profile to switch algorithms — no code changes required
+
+crypto:
+  profile: standard  # options: standard | iot | high-security | transition
+
+  kem:
+    algorithm: ML-KEM-768  # FIPS 203 — NIST Level 3
+    # Alternatives:
+    #   ML-KEM-512   (FIPS 203, Level 1 — lightweight)
+    #   ML-KEM-1024  (FIPS 203, Level 5 — long-term data)
+    #   HQC-128      (backup KEM, not yet FIPS)
+
+  sig:
+    algorithm: ML-DSA-65   # FIPS 204 — NIST Level 3
+    # Alternatives:
+    #   ML-DSA-44    (FIPS 204, Level 2 — short-lived auth)
+    #   ML-DSA-87    (FIPS 204, Level 5 — root CA)
+    #   Falcon-512   (FIPS 206, Level 1 — IoT/constrained)
+    #   Falcon-1024  (FIPS 206, Level 5 — high-security IoT)
+
+# Profile definitions:
+# standard:      ML-KEM-768 + ML-DSA-65  — enterprise TLS, EHR portals
+# iot:           ML-KEM-512 + Falcon-512  — medical IoT, bandwidth-constrained
+# high-security: ML-KEM-1024 + ML-DSA-87 — root CA, 10yr+ data retention
+# transition:    ML-KEM-768 + ML-DSA-65  — hybrid mode with classical fallback

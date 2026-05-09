@@ -1,0 +1,100 @@
+{
+  "metadata": {
+    "generated": "2026-05-09T15:09:40.275681",
+    "platform": "Apple Silicon ARM64",
+    "iterations": 100,
+    "context": "SWERI-Ingham Institute / SWSLHD clinical infrastructure"
+  },
+  "results": [
+    {
+      "use_case": "EHR_TLS_Session",
+      "algorithm": "ML-KEM-768",
+      "fips": "203",
+      "type": "KEM",
+      "security_level": "L3",
+      "keygen_ms": 0.0224,
+      "operation_ms": 0.0131,
+      "decap_ms": 0.0125,
+      "public_key_bytes": 1184,
+      "output_bytes": 1088,
+      "requirement": "Low latency, NIST Level 3 \u2014 matches current TLS security margin",
+      "constraint": "Must fit TLS 1.3 handshake without fragmentation",
+      "clinical_system": "Electronic Health Record portal (external-facing)"
+    },
+    {
+      "use_case": "Long_Term_Patient_Records",
+      "algorithm": "ML-KEM-1024",
+      "fips": "203",
+      "type": "KEM",
+      "security_level": "L5",
+      "keygen_ms": 0.0157,
+      "operation_ms": 0.0157,
+      "decap_ms": 0.0176,
+      "public_key_bytes": 1568,
+      "output_bytes": 1568,
+      "requirement": "Maximum security \u2014 10-year data retention, HNDL threat window",
+      "constraint": "Storage overhead acceptable \u2014 used for archival key wrapping",
+      "clinical_system": "Patient record archive, pathology results (7\u201310yr retention)"
+    },
+    {
+      "use_case": "Clinical_Code_Signing",
+      "algorithm": "ML-DSA-65",
+      "fips": "204",
+      "type": "SIG",
+      "security_level": "L3",
+      "keygen_ms": 0.0723,
+      "operation_ms": 0.2722,
+      "verify_ms": 0.0643,
+      "public_key_bytes": 1952,
+      "output_bytes": 3309,
+      "requirement": "Software update verification \u2014 NIST Level 3",
+      "constraint": "Signature verified at boot/install, size less critical than IoT",
+      "clinical_system": "Firmware signing for infusion pumps, imaging systems"
+    },
+    {
+      "use_case": "Medical_IoT_Auth",
+      "algorithm": "Falcon-512",
+      "fips": "206",
+      "type": "SIG",
+      "security_level": "L1",
+      "keygen_ms": 3.7257,
+      "operation_ms": 0.1216,
+      "verify_ms": 0.0189,
+      "public_key_bytes": 897,
+      "output_bytes": 656,
+      "requirement": "Compact signature \u2014 bandwidth-constrained medical devices",
+      "constraint": "Infusion pumps, glucose monitors, sensors: packet budget <1KB",
+      "clinical_system": "IoT medical device authentication over low-bandwidth channels"
+    },
+    {
+      "use_case": "Root_CA_Certificate",
+      "algorithm": "ML-DSA-87",
+      "fips": "204",
+      "type": "SIG",
+      "security_level": "L5",
+      "keygen_ms": 0.1022,
+      "operation_ms": 0.3197,
+      "verify_ms": 0.1064,
+      "public_key_bytes": 2592,
+      "output_bytes": 4627,
+      "requirement": "Maximum security \u2014 root CA certs valid 20 years",
+      "constraint": "Signed once, verified rarely \u2014 size irrelevant",
+      "clinical_system": "SWSLHD root certificate authority"
+    },
+    {
+      "use_case": "Inter_Hospital_Key_Exchange",
+      "algorithm": "ML-KEM-768",
+      "fips": "203",
+      "type": "KEM",
+      "security_level": "L3",
+      "keygen_ms": 0.0114,
+      "operation_ms": 0.0127,
+      "decap_ms": 0.0126,
+      "public_key_bytes": 1184,
+      "output_bytes": 1088,
+      "requirement": "Secure channel for multi-hospital data sharing",
+      "constraint": "Standard TLS channel \u2014 same constraints as EHR TLS",
+      "clinical_system": "Cross-hospital research data sharing (SWERI protocol)"
+    }
+  ]
+}
