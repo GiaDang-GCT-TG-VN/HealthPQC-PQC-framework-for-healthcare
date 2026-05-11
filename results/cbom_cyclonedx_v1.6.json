@@ -1,0 +1,28 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:7224c6c2-fba5-41f2-ac26-1f1127d17c98",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-05-11T03:51:23.250172+00:00",
+    "tools": [
+      {
+        "type": "application",
+        "name": "HealthPQC",
+        "version": "2.0.0",
+        "description": "Post-Quantum Cryptography scanner for healthcare and enterprise infrastructure",
+        "externalReferences": [
+          {
+            "type": "vcs",
+            "url": "https://github.com/GiaDang-GCT-TG-VN/HealthPQC-PQC-framework-for-healthcare"
+          }
+        ]
+      }
+    ],
+    "component": {
+      "type": "application",
+      "name": "06_PQC"
+    }
+  },
+  "components": []
+}

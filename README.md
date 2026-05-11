@@ -1,137 +1,233 @@
 # HealthPQC — Post-Quantum Cryptography Framework for Healthcare
 
-> Practical PQC implementation built in the context of clinical infrastructure  
-> (SWERI–Ingham Institute / SWSLHD, 500K+ patient population, Sydney NSW)
+> A practical PQC implementation and migration toolkit built for clinical infrastructure
+> Developed in collaboration with SWERI–Ingham Institute / SWSLHD (500K+ patient population, Sydney NSW)
 
 ---
 
-## What this project covers
+## Project Summary
 
-| Phase | Focus | Time | EY JD Coverage |
-|-------|-------|------|----------------|
-| Phase 1 | PQC algorithm benchmarking (ML-KEM, ML-DSA, Falcon) | ~15h | Prototype & benchmark PQC algorithms |
-| Phase 2 | Hybrid TLS 1.3 key exchange — live demo | ~8h | Hybrid key exchange, latency measurement |
-| Phase 3 | CBOM — crypto-inventory tool for codebases | ~8h | Crypto-inventory, detect legacy dependencies |
-| Phase 4 | Load testing — PQC under realistic concurrency | ~8h | Measure performance impacts at scale |
-| Phase 5 | Regulatory framing + QHE positioning | ~6h | Thought leadership, executive documents |
+This framework provides **end-to-end tooling for Post-Quantum Cryptography migration** in healthcare environments, addressing the "Harvest Now, Decrypt Later" (HNDL) threat to patient data with 10+ year retention requirements.
 
-**Total: ~45 hours → full EY Quantum Associate JD coverage**
+### What We Built
+
+| Component | Purpose | Output |
+|-----------|---------|--------|
+| **Algorithm Benchmarks** | Performance testing of NIST-standardized PQC algorithms | Real ARM64 timing data for ML-KEM, ML-DSA, Falcon |
+| **Hybrid TLS Demo** | X25519 + ML-KEM-768 combined key exchange | Latency comparison: classical vs hybrid vs PQC-only |
+| **CBOM Scanner** | Crypto-inventory tool using AST analysis | JSON report of quantum-vulnerable dependencies |
+| **Certificate Scanner** | PKI audit for RSA/ECDSA certificates | Identifies certificates needing PQC replacement |
+| **Crypto-Agility Engine** | Algorithm-as-config pattern demo | YAML-driven algorithm switching |
+| **Load Testing Suite** | Concurrent user performance testing | P50/P95/P99 latency at 100–1000 users |
+| **Documentation Suite** | Regulatory guidance and migration playbooks | Executive briefs, technical guides, compliance matrix |
 
 ---
 
-## Quick start
+## Key Results (ARM64 / Apple Silicon M-series)
+
+### Algorithm Performance
+
+| Algorithm | NIST FIPS | KeyGen (ms) | Public Key (B) | Output (B) | Healthcare Use Case |
+|-----------|-----------|-------------|----------------|------------|---------------------|
+| **ML-KEM-768** | FIPS 203 | 0.022 | 1,184 | 1,088 | EHR TLS sessions (NIST Level 3) |
+| **ML-KEM-1024** | FIPS 203 | 0.016 | 1,568 | 1,568 | Long-term patient data (NIST Level 5) |
+| **ML-DSA-65** | FIPS 204 | 0.072 | 1,952 | 3,309 | Clinical code signing |
+| **Falcon-512** | FIPS 206 | 3.726 | 897 | 656 | Medical IoT authentication |
+
+### Hybrid TLS Performance
+
+| Mode | Avg Latency (ms) | P99 at 1000 Users |
+|------|------------------|-------------------|
+| Classical (X25519) | 0.256 | 71 ms |
+| PQC-only (ML-KEM-768) | 0.045 | 70 ms |
+| **Hybrid (X25519 + ML-KEM-768)** | 0.384 | 71 ms |
+
+**Key Finding:** Hybrid PQC adds **zero measurable P99 overhead** at scale (71ms = 71ms).
+
+### Load Test Summary (1000 Concurrent Users)
+
+- **Total Requests:** 180,423
+- **Failure Rate:** 0%
+- **Hybrid vs Classical P99:** Identical (71ms)
+- **Throughput:** ~1,000 RPS per endpoint
+
+---
+
+## Repository Structure
+
+```
+HealthPQC/
+├── PQC_README.md              # This file — project summary
+├── requirements.txt           # Python dependencies
+├── verify_liboqs.py           # liboqs installation verification
+│
+├── benchmarks/
+│   ├── healthcare_benchmark.py    # 6 clinical use case benchmarks
+│   ├── full_parameter_sweep.py    # All 26 KEMs + 68 SIGs tested
+│   └── results/                   # CSV outputs
+│
+├── tls/
+│   ├── hybrid_keyx_benchmark.py   # X25519 vs ML-KEM vs Hybrid comparison
+│   └── results/                   # Latency CSVs
+│
+├── tools/
+│   ├── cbom_scanner.py            # AST-based crypto inventory scanner
+│   ├── cert_scanner.py            # PKI certificate vulnerability scanner
+│   └── crypto_agility_engine.py   # Algorithm-as-config demo
+│
+├── load_test/
+│   ├── app.py                     # FastAPI server (3 endpoints)
+│   ├── locustfile.py              # Locust load test scenarios
+│   └── results/                   # P50/P95/P99 CSVs at 100/500/1000 users
+│
+├── config/
+│   └── crypto_config.yaml         # Crypto-agility configuration
+│
+├── results/                       # Aggregated benchmark outputs
+│   ├── healthcare_benchmark.csv
+│   ├── full_parameter_sweep.csv
+│   ├── hybrid_keyx_benchmark.csv
+│   ├── cbom_report.json
+│   └── cert_scan.json
+│
+└── docs/
+    ├── algorithm_index.md         # Algorithm comparison with real benchmarks
+    ├── liboqs_install.md          # Apple Silicon ARM64 installation guide
+    ├── tls_migration_guide.md     # EHR system TLS migration walkthrough
+    ├── regulatory_matrix.md       # NIST / NSA / EU / APRA compliance deadlines
+    ├── performance_impact_brief.md    # Technical brief with load test data
+    ├── pqc_executive_brief.md     # Executive summary for healthcare leadership
+    ├── pqc_qhe_privacy_stack.md   # PQC + QHE privacy architecture
+    └── sweri_engagement_summary.md    # Clinical deployment context
+```
+
+---
+
+## Tools Developed
+
+### 1. Healthcare Benchmark (`benchmarks/healthcare_benchmark.py`)
+Benchmarks 6 clinical use cases mapping PQC algorithms to real healthcare scenarios:
+- EHR TLS handshakes
+- Patient record encryption (10-year retention)
+- Clinical software code signing
+- Medical IoT device authentication
+- Root CA for hospital PKI
+- Inter-hospital data exchange
+
+### 2. Full Parameter Sweep (`benchmarks/full_parameter_sweep.py`)
+Tests **all 94 algorithms** in liboqs:
+- 26 Key Encapsulation Mechanisms (KEMs)
+- 68 Digital Signature algorithms
+- Outputs: keygen time, encap/decap or sign/verify time, key sizes
+
+### 3. Hybrid TLS Benchmark (`tls/hybrid_keyx_benchmark.py`)
+Compares three key exchange modes:
+- **Classical:** X25519 only
+- **PQC-only:** ML-KEM-768 only
+- **Hybrid:** X25519 + ML-KEM-768 combined via HKDF
+
+### 4. CBOM Scanner (`tools/cbom_scanner.py`)
+AST-based scanner that detects quantum-vulnerable crypto usage:
+- RSA, DSA, ECDSA, ECDH imports
+- Prioritized JSON report (HIGH/MEDIUM/LOW)
+- Scanned 225 findings in this repo alone
+
+### 5. Certificate Scanner (`tools/cert_scanner.py`)
+Scans PEM certificates for quantum vulnerability:
+- Flags RSA, ECDSA, DSA algorithms
+- Reports key sizes and expiration dates
+- Outputs JSON remediation report
+
+### 6. Crypto-Agility Engine (`tools/crypto_agility_engine.py`)
+Demonstrates algorithm-as-config pattern:
+- Reads `config/crypto_config.yaml`
+- Swaps algorithms without code changes
+- Foundation for zero-downtime PQC migration
+
+### 7. Load Test Suite (`load_test/`)
+FastAPI + Locust testing at scale:
+- 3 endpoints: `/classical`, `/pqc-only`, `/hybrid`
+- Tested at 100, 500, 1000 concurrent users
+- Full P50/P95/P99/Max latency metrics
+
+---
+
+## Documentation Suite
+
+| Document | Purpose |
+|----------|---------|
+| `algorithm_index.md` | Living comparison table with real benchmark data |
+| `liboqs_install.md` | Step-by-step ARM64/Apple Silicon installation |
+| `tls_migration_guide.md` | 4-phase EHR TLS migration playbook |
+| `regulatory_matrix.md` | NIST, NSA, EU, APRA compliance timeline |
+| `performance_impact_brief.md` | 1-page technical brief with load test results |
+| `pqc_executive_brief.md` | Non-technical executive summary |
+| `pqc_qhe_privacy_stack.md` | PQC + QHE combined privacy architecture |
+| `sweri_engagement_summary.md` | Real-world clinical deployment context |
+
+---
+
+## Technology Stack
+
+- **PQC Library:** liboqs 0.14.0 (Open Quantum Safe)
+- **Algorithms:** ML-KEM (FIPS 203), ML-DSA (FIPS 204), Falcon (FIPS 206)
+- **Classical Crypto:** cryptography library (X25519, HKDF)
+- **Web Framework:** FastAPI + Uvicorn
+- **Load Testing:** Locust
+- **Platform:** Python 3.13, ARM64 (Apple Silicon)
+
+---
+
+## Quick Start
 
 ```bash
-# 1. Clone the repository
+# Clone the repository
 git clone https://github.com/GiaDang-GCT-TG-VN/HealthPQC-PQC-framework-for-healthcare
 cd HealthPQC-PQC-framework-for-healthcare
 
-# 2. Install Python dependencies
+# Install dependencies
 pip install -r requirements.txt
 
-# 3. Run Phase 1 benchmark (requires liboqs — see docs/liboqs_install.md)
+# Verify liboqs installation
+python verify_liboqs.py
+
+# Run healthcare benchmarks
 python benchmarks/healthcare_benchmark.py
 
-# 4. Run CBOM scanner on this repo
+# Run CBOM scanner
 python tools/cbom_scanner.py --target ./
 
-# 5. Start FastAPI load-test server
-cd load_test && uvicorn app:app --reload
+# Start load test server
+cd load_test && uvicorn app:app --workers 4
 
-# 6. Run load test (in separate terminal)
-cd load_test && locust -f locustfile.py --host http://localhost:8000
+# Run load test (separate terminal)
+locust -f locustfile.py --host http://localhost:8000
 ```
 
 ---
 
-## Key results (ARM64 / Apple Silicon M-series)
+## Context: PQC and QHE Relationship
 
-> Generated by `benchmarks/healthcare_benchmark.py` — real ARM64 Apple Silicon M-series benchmarks
+This project complements PhD research in **Quantum Homomorphic Encryption (QHE)**:
 
-| Algorithm | FIPS | Use Case | KeyGen (ms) | PubKey (B) | Output (B) | Note |
-|-----------|------|----------|-------------|------------|------------|------|
-| ML-KEM-768 | 203 | EHR TLS session | 0.022 | 1184 | 1088 | NIST L3 — standard choice |
-| ML-KEM-1024 | 203 | Long-term patient data | 0.016 | 1568 | 1568 | NIST L5 — 10yr retention |
-| ML-DSA-65 | 204 | Clinical code signing | 0.072 | 1952 | 3309 | NIST L3 — server-side |
-| Falcon-512 | 206 | Medical IoT auth | 3.726 | 897 | 656 | **IoT choice — 5× smaller sig** |
-| Hybrid (X25519 + ML-KEM-768) | — | External TLS endpoints | +0.128 | 2336 | — | P99 overhead: +0.162ms |
+| Technology | Protects Data... | Timeline |
+|------------|------------------|----------|
+| **PQC** | In transit and at rest | Migration required by 2030-2035 |
+| **QHE** | During computation | Research frontier (5-10 years) |
 
-**P99 latency delta (hybrid vs classical at 1000 concurrent users): 0ms — identical at scale (71ms vs 71ms)**
+Both share mathematical foundations in **lattice problems** (LWE/RLWE hardness assumptions).
 
 ---
 
-## Repository structure
+## Professional Context
 
-```
-pqc-healthcare-framework/
-├── README.md                          ← you are here
-├── PLAN.md                            ← full project plan, all 5 phases
-├── INTERVIEW_PREP.md                  ← interview Q&A per phase
-├── requirements.txt
-├── Dockerfile
-├── docker-compose.yml
-│
-├── benchmarks/
-│   ├── healthcare_benchmark.py        ← Phase 1 — 4 clinical use cases
-│   ├── full_parameter_sweep.py        ← Phase 1 — all liboqs algorithms
-│   └── results/                       ← CSV outputs
-│
-├── tls/
-│   ├── hybrid_keyx_benchmark.py       ← Phase 2 — X25519 vs ML-KEM vs hybrid
-│   ├── oqs_tls_demo.sh                ← Phase 2 — OQS-OpenSSL server/client
-│   └── results/                       ← latency CSVs
-│
-├── tools/
-│   ├── cbom_scanner.py                ← Phase 3 — crypto-inventory scanner
-│   ├── cert_scanner.py                ← Phase 3 — PKI certificate scanner
-│   └── crypto_agility_engine.py       ← Phase 3 — algorithm-as-config demo
-│
-├── load_test/
-│   ├── app.py                         ← Phase 4 — FastAPI benchmark server
-│   ├── locustfile.py                  ← Phase 4 — load test scenarios
-│   └── results/                       ← P50/P95/P99 CSVs
-│
-├── config/
-│   └── crypto_config.yaml             ← crypto-agility config file
-│
-└── docs/
-    ├── algorithm_index.md             ← living algorithm comparison table
-    ├── liboqs_install.md              ← Apple Silicon ARM64 install guide
-    ├── tls_migration_guide.md         ← EHR system TLS migration walkthrough
-    ├── regulatory_matrix.md           ← NIST · NSA · EU · APRA deadlines
-    ├── performance_impact_brief.md    ← 1-page technical brief (load test results)
-    ├── pqc_executive_brief.md         ← executive brief for Australian healthcare
-    ├── pqc_qhe_privacy_stack.md       ← QHE positioning paper
-    └── sweri_engagement_summary.md    ← sanitised SWERI engagement summary
-```
-
----
-
-## Context — QHE and PQC relationship
-
-This project sits alongside PhD research in **Quantum Homomorphic Encryption (QHE)** at Western Sydney University / SWERI–Ingham Institute.
-
-**PQC and QHE are complementary, not competing:**
-
-- **PQC (this project)** — secures data *in transit* and *at rest*. Replaces RSA/ECDH/ECDSA with quantum-resistant algorithms. Migration is urgent and well-defined. This is the problem EY's quantum safety program is solving today.
-
-- **QHE (PhD research)** — secures data *while it is being computed on*. A server processes encrypted data without ever decrypting it. This is the research frontier for the next 5–10 years as quantum hardware matures.
-
-Both share the same mathematical foundations — **lattice problems, LWE/RLWE hardness assumptions**. The PhD provides deep fluency in the mathematics that underpins both fields.
-
-See `docs/pqc_qhe_privacy_stack.md` for the complete privacy stack framing.
-
----
-
-## Professional context
-
-- **SWERI engagement**: Cryptographic risk assessment and PQC migration roadmap for SWSLHD clinical infrastructure (500K+ patients). Details in `docs/sweri_engagement_summary.md`.
-- **Academic validation**: 3 IEEE publications in lattice-based QHE (QCNC 2026, qCCL 2026, QCE 2026).
-- **Hardware validation**: IBM Quantum hardware (ibm_brisbane) — 96.1% algorithm correctness.
-- **Contact**: quanphatgrp@gmail.com | Western Sydney University
+- **Clinical Deployment:** SWERI–Ingham Institute / SWSLHD (500K+ patients)
+- **Academic Validation:** 3 IEEE publications in lattice-based QHE
+- **Hardware Testing:** IBM Quantum (ibm_brisbane) — 96.1% correctness
+- **Contact:** quanphatgrp@gmail.com | Western Sydney University
 
 ---
 
 ## License
 
-MIT — open for research and educational use.
+MIT — Open for research and educational use.

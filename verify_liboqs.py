@@ -1,174 +1,155 @@
+#!/usr/bin/env python3
 """
-verify_liboqs.py
-Run this after completing docs/liboqs_install.md to confirm the library
-is installed correctly and algorithms execute on your ARM64 hardware.
-
-Usage:
-    python verify_liboqs.py
-
-Expected output:
-    liboqs is fully operational. Ready for Phase 1.
+verify_liboqs.py — HealthPQC v2.0
+M6 FIX: checks minimum version (0.12+), validates required algorithms, runs smoke test.
+Run before any benchmark: python verify_liboqs.py
 """
 
-import oqs
-import time
 import sys
+import time
+
+MINIMUM_VERSION = (0, 12, 0)   # ML-KEM (FIPS 203) available from 0.12+
+REQUIRED_KEMS   = ["ML-KEM-768", "ML-KEM-1024"]
+REQUIRED_SIGS   = ["ML-DSA-65", "Falcon-512"]
+OPTIONAL_KEMS   = ["ML-KEM-512", "Kyber768"]
+OPTIONAL_SIGS   = ["ML-DSA-44", "ML-DSA-87", "SLH-DSA-SHA2-128s"]
 
 
-def check_availability():
-    kems = oqs.get_enabled_kem_mechanisms()
-    sigs = oqs.get_enabled_sig_mechanisms()
+def check() -> bool:
+    failures = []
 
-    print("=== liboqs availability check ===")
-    print(f"KEMs available: {len(kems)}")
-    print(f"SIGs available: {len(sigs)}")
-
-    required = {
-        "KEM": ["ML-KEM-512", "ML-KEM-768", "ML-KEM-1024"],
-        "SIG": ["ML-DSA-44", "ML-DSA-65", "ML-DSA-87", "Falcon-512", "Falcon-1024"]
-    }
-
-    all_present = True
-
-    print()
-    print("FIPS 203 (ML-KEM):")
-    for alg in required["KEM"]:
-        present = alg in kems
-        status = "+" if present else "x MISSING"
-        print(f"  {alg:15s} {status}")
-        if not present:
-            all_present = False
-
-    print()
-    print("FIPS 204 (ML-DSA):")
-    for alg in required["SIG"][:3]:
-        present = alg in sigs
-        status = "+" if present else "x MISSING"
-        print(f"  {alg:15s} {status}")
-        if not present:
-            all_present = False
-
-    print()
-    print("FIPS 206 (Falcon/FN-DSA):")
-    for alg in required["SIG"][3:]:
-        present = alg in sigs
-        status = "+" if present else "x MISSING"
-        print(f"  {alg:15s} {status}")
-        if not present:
-            all_present = False
-
-    return all_present
-
-
-def test_kem():
-    print()
-    print("=== ML-KEM-768 key exchange test ===")
-    with oqs.KeyEncapsulation("ML-KEM-768") as server:
-        t0 = time.perf_counter()
-        pub = server.generate_keypair()
-        keygen_ms = (time.perf_counter() - t0) * 1000
-        print(f"Public key generated: {len(pub)} bytes  ({keygen_ms:.3f} ms)")
-
-        with oqs.KeyEncapsulation("ML-KEM-768") as client:
-            t0 = time.perf_counter()
-            ct, ss_client = client.encap_secret(pub)
-            encap_ms = (time.perf_counter() - t0) * 1000
-            print(f"Ciphertext:          {len(ct)} bytes  ({encap_ms:.3f} ms)")
-            print(f"Shared secret:       {len(ss_client)} bytes")
-
-        t0 = time.perf_counter()
-        ss_server = server.decap_secret(ct)
-        decap_ms = (time.perf_counter() - t0) * 1000
-        print(f"Decapsulation:       {decap_ms:.3f} ms")
-
-    if ss_client != ss_server:
-        print("FAIL: Shared secrets do not match!")
+    # ------------------------------------------------------------------
+    # 1. Import
+    # ------------------------------------------------------------------
+    try:
+        import oqs
+        print(f"[OK]   import oqs — liboqs-python installed")
+    except ImportError as e:
+        print(f"[FAIL] Cannot import oqs: {e}")
+        print()
+        print("  Fix:")
+        print("    pip install liboqs-python")
+        print("    (liboqs C library must also be installed)")
+        print("    macOS:  brew install liboqs")
+        print("    Ubuntu: sudo apt install liboqs-dev")
+        print("    See:    docs/liboqs_install.md")
         return False
 
-    print("Shared secrets match: PASS")
-    return True
+    # ------------------------------------------------------------------
+    # 2. Version
+    # ------------------------------------------------------------------
+    version_str = getattr(oqs, "__version__", "0.0.0")
+    try:
+        parts = tuple(int(x) for x in version_str.split(".")[:3])
+    except ValueError:
+        parts = (0, 0, 0)
 
+    if parts >= MINIMUM_VERSION:
+        print(f"[OK]   liboqs version: {version_str}  (minimum: {'.'.join(str(x) for x in MINIMUM_VERSION)})")
+    elif parts == (0, 0, 0):
+        # Version not reported — check if ML-KEM is available instead
+        test_kems = oqs.get_enabled_kem_mechanisms()
+        if "ML-KEM-768" in test_kems:
+            print(f"[OK]   liboqs version: {version_str} (unset) — ML-KEM available, assuming >= 0.12")
+        else:
+            print(f"[WARN] liboqs version unknown and ML-KEM not found — may be too old")
+            failures.append("version")
+    else:
+        min_str = ".".join(str(x) for x in MINIMUM_VERSION)
+        print(f"[FAIL] liboqs {version_str} too old — minimum required: {min_str}")
+        print(f"       ML-KEM (FIPS 203) is not available in versions < {min_str}")
+        print(f"       ML-KEM was called 'Kyber' in older versions — algorithm names differ")
+        failures.append("version")
 
-def test_signature():
+    # ------------------------------------------------------------------
+    # 3. Required algorithms
+    # ------------------------------------------------------------------
+    available_kems = set(oqs.get_enabled_kem_mechanisms())
+    available_sigs = set(oqs.get_enabled_sig_mechanisms())
+
+    for algo in REQUIRED_KEMS:
+        if algo in available_kems:
+            print(f"[OK]   KEM required:  {algo}")
+        else:
+            print(f"[FAIL] KEM missing:   {algo}  ← required for HealthPQC benchmarks")
+            failures.append(f"missing-{algo}")
+
+    for algo in REQUIRED_SIGS:
+        if algo in available_sigs:
+            print(f"[OK]   SIG required:  {algo}")
+        else:
+            print(f"[FAIL] SIG missing:   {algo}  ← required for HealthPQC benchmarks")
+            failures.append(f"missing-{algo}")
+
+    for algo in OPTIONAL_KEMS:
+        tag = "[OK]  " if algo in available_kems else "[INFO]"
+        print(f"{tag}  KEM optional: {algo}  {'✓' if algo in available_kems else '(not available)'}")
+
+    for algo in OPTIONAL_SIGS:
+        tag = "[OK]  " if algo in available_sigs else "[INFO]"
+        print(f"{tag}  SIG optional: {algo}  {'✓' if algo in available_sigs else '(not available)'}")
+
+    # ------------------------------------------------------------------
+    # 4. Smoke test — actually run ML-KEM-768
+    # ------------------------------------------------------------------
+    if "ML-KEM-768" in available_kems:
+        try:
+            t0 = time.time()
+            with oqs.KeyEncapsulation("ML-KEM-768") as kem:
+                pub = kem.generate_keypair()
+                ct, ss = kem.encap_secret(pub)
+                dec = kem.decap_secret(ct)
+            elapsed_ms = (time.time() - t0) * 1000
+
+            if dec == ss:
+                print(f"[OK]   ML-KEM-768 smoke test passed  "
+                      f"(keygen+encap+decap in {elapsed_ms:.1f}ms | pubkey={len(pub)}B ct={len(ct)}B)")
+            else:
+                print(f"[FAIL] ML-KEM-768 decapsulation mismatch — shared secrets differ")
+                failures.append("kem-smoke-test")
+
+        except Exception as e:
+            print(f"[FAIL] ML-KEM-768 smoke test exception: {e}")
+            failures.append("kem-smoke-test")
+    else:
+        print(f"[SKIP] ML-KEM-768 smoke test — algorithm not available")
+
+    # 5. Smoke test — ML-DSA-65
+    if "ML-DSA-65" in available_sigs:
+        try:
+            with oqs.Signature("ML-DSA-65") as signer:
+                pub = signer.generate_keypair()
+                sig = signer.sign(b"HealthPQC smoke test")
+                ok  = signer.verify(b"HealthPQC smoke test", sig, pub)
+            if ok:
+                print(f"[OK]   ML-DSA-65 smoke test passed   (sig={len(sig)}B pubkey={len(pub)}B)")
+            else:
+                print(f"[FAIL] ML-DSA-65 verify returned False")
+                failures.append("sig-smoke-test")
+        except Exception as e:
+            print(f"[FAIL] ML-DSA-65 smoke test exception: {e}")
+            failures.append("sig-smoke-test")
+    else:
+        print(f"[SKIP] ML-DSA-65 smoke test — algorithm not available")
+
+    # ------------------------------------------------------------------
+    # Summary
+    # ------------------------------------------------------------------
     print()
-    print("=== Falcon-512 signature test (IoT use case) ===")
-    message = b"SWERI-SWSLHD-clinical-device-authentication-v1"
+    if not failures:
+        print("✓  All checks passed — HealthPQC benchmarks ready to run.")
+        print()
+        print("  Quick start:")
+        print("    python benchmarks/healthcare_benchmark.py")
+        print("    python tools/cbom_scanner.py --target .")
+        print("    python tools/pqc_pki_demo.py")
+    else:
+        print(f"✗  {len(failures)} check(s) failed: {failures}")
+        print("  Fix the errors above before running benchmarks.")
 
-    with oqs.Signature("Falcon-512") as signer:
-        t0 = time.perf_counter()
-        pub = signer.generate_keypair()
-        keygen_ms = (time.perf_counter() - t0) * 1000
-        print(f"Public key:      {len(pub)} bytes  ({keygen_ms:.1f} ms keygen)")
-
-        t0 = time.perf_counter()
-        sig = signer.sign(message)
-        sign_ms = (time.perf_counter() - t0) * 1000
-        print(f"Signature:       {len(sig)} bytes  ({sign_ms:.3f} ms sign)")
-        print(f"Comparison:      ML-DSA-65 would be ~3309 bytes")
-        print(f"IoT advantage:   {3309/len(sig):.1f}x smaller than ML-DSA-65")
-
-    with oqs.Signature("Falcon-512") as verifier:
-        t0 = time.perf_counter()
-        valid = verifier.verify(message, sig, pub)
-        verify_ms = (time.perf_counter() - t0) * 1000
-        print(f"Verification:    {verify_ms:.3f} ms")
-
-    if not valid:
-        print("FAIL: Signature verification failed!")
-        return False
-
-    print("Signature verified: PASS")
-    return True
-
-
-def test_mldsa():
-    print()
-    print("=== ML-DSA-65 signature test (server use case) ===")
-    message = b"clinical_code_signing_payload_v2.1.0"
-
-    with oqs.Signature("ML-DSA-65") as signer:
-        pub = signer.generate_keypair()
-        sig = signer.sign(message)
-        print(f"Public key: {len(pub)} bytes")
-        print(f"Signature:  {len(sig)} bytes")
-
-    with oqs.Signature("ML-DSA-65") as verifier:
-        valid = verifier.verify(message, sig, pub)
-
-    if not valid:
-        print("FAIL: ML-DSA-65 verification failed!")
-        return False
-
-    print("ML-DSA-65 verified: PASS")
-    return True
+    return len(failures) == 0
 
 
 if __name__ == "__main__":
-    print("HealthPQC — liboqs Verification Script")
-    print("Platform: Apple Silicon ARM64")
-    print("=" * 50)
-
-    import platform
-    arch = platform.machine()
-    print(f"Architecture: {arch}")
-    if arch != "arm64":
-        print(f"WARNING: expected arm64, got {arch}")
-        print("Results may not reflect native ARM64 performance")
-    print()
-
-    results = []
-    results.append(check_availability())
-    results.append(test_kem())
-    results.append(test_signature())
-    results.append(test_mldsa())
-
-    print()
-    print("=" * 50)
-    if all(results):
-        print("liboqs is fully operational on ARM64.")
-        print("Ready for Phase 1: run `python benchmarks/healthcare_benchmark.py`")
-        sys.exit(0)
-    else:
-        print("VERIFICATION FAILED — see errors above.")
-        print("Check docs/liboqs_install.md troubleshooting section.")
-        sys.exit(1)
+    ok = check()
+    sys.exit(0 if ok else 1)

@@ -1,0 +1,71 @@
+{
+  "root_ca": {
+    "payload": {
+      "version": 3,
+      "subject": "CN=QuantumBank Root CA, O=QuantumBank AU, C=AU",
+      "issuer": "CN=QuantumBank Root CA, O=QuantumBank AU, C=AU",
+      "algorithm": "ML-DSA-65 (FIPS 204)",
+      "public_key_hex": "45b76b8d16c519d59b531a7031dec32ae86130490b73bd0f46b06e65fde0112e...",
+      "public_key_size_bytes": 1952,
+      "not_before": "2026-05-11T03:51:18.003150+00:00",
+      "not_after": "2036-05-08T03:51:18.003150+00:00",
+      "is_ca": true,
+      "basic_constraints": "CA:TRUE, pathLenConstraint=0",
+      "key_usage": "keyCertSign, cRLSign",
+      "use_case": "Hospital PKI trust anchor \u2014 10-year root"
+    },
+    "signature_hex": "cc939f13badd11fbfb777c19f570ec7638330bf13899dc2372ddd9d440c45d0b...",
+    "signature_size_bytes": 3309,
+    "digest_algorithm": "SHA3-256",
+    "signing_algorithm": "ML-DSA-65",
+    "signed_by": "root-ca",
+    "sign_ms": 0.48,
+    "keygen_ms": 0.327
+  },
+  "intermediate_ca": {
+    "payload": {
+      "version": 3,
+      "subject": "CN=QuantumBank Issuing CA, O=QuantumBank AU, C=AU",
+      "issuer": "CN=QuantumBank Root CA, O=QuantumBank AU, C=AU",
+      "algorithm": "ML-DSA-65 (FIPS 204)",
+      "public_key_hex": "aa7f90837b088c9781a9000e6bb8407f4fd09531a7ed80b749ee6da748eba430...",
+      "public_key_size_bytes": 1952,
+      "not_before": "2026-05-11T03:51:18.004180+00:00",
+      "not_after": "2031-05-10T03:51:18.004180+00:00",
+      "is_ca": true,
+      "basic_constraints": "CA:TRUE, pathLenConstraint=0",
+      "key_usage": "keyCertSign, cRLSign",
+      "use_case": "Issues end-entity certificates for banking services"
+    },
+    "signature_hex": "f15cee0f24d89668586a70bef94f012110152b9c0df671db8b4639c6829992dd...",
+    "signature_size_bytes": 3309,
+    "digest_algorithm": "SHA3-256",
+    "signing_algorithm": "ML-DSA-65",
+    "signed_by": "root-ca",
+    "sign_ms": 0.104,
+    "keygen_ms": 0.077
+  },
+  "leaf_cert": {
+    "payload": {
+      "version": 3,
+      "subject": "CN=api.quantumbank.com.au, O=QuantumBank AU, C=AU",
+      "issuer": "CN=QuantumBank Issuing CA, O=QuantumBank AU, C=AU",
+      "algorithm": "ML-DSA-65 (FIPS 204)",
+      "public_key_hex": "0f277bd4abfd3977a02e04ef1e1fabbc1e459ae3f331a84bc4259e1f803e69db...",
+      "public_key_size_bytes": 1952,
+      "not_before": "2026-05-11T03:51:18.004388+00:00",
+      "not_after": "2027-05-11T03:51:18.004388+00:00",
+      "is_ca": false,
+      "basic_constraints": "CA:FALSE",
+      "key_usage": "digitalSignature, keyEncipherment",
+      "use_case": "Online banking API TLS \u2014 customer-facing endpoint"
+    },
+    "signature_hex": "deb314972b1ecc5989d2ba0f754a31a898600ae8adafdf0e36caf34008786785...",
+    "signature_size_bytes": 3309,
+    "digest_algorithm": "SHA3-256",
+    "signing_algorithm": "ML-DSA-65",
+    "signed_by": "intermediate-ca",
+    "sign_ms": 0.107,
+    "keygen_ms": 0.075
+  }
+}
