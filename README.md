@@ -1,5 +1,10 @@
 # HealthPQC — Post-Quantum Cryptography Framework for Healthcare
 
+![Tests](https://img.shields.io/badge/tests-28%20passed-brightgreen)
+![CycloneDX](https://img.shields.io/badge/CBOM-CycloneDX%201.6-blue)
+![FIPS](https://img.shields.io/badge/algorithms-FIPS%20203%20204%20206-blue)
+![Python](https://img.shields.io/badge/python-3.13-blue)
+
 > A practical PQC implementation and migration toolkit built for clinical infrastructure
 > Developed in collaboration with SWERI–Ingham Institute / SWSLHD (500K+ patient population, Sydney NSW)
 
