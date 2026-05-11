@@ -1,0 +1,74 @@
+name: Generate CBOM
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  cbom:
+    name: CycloneDX 1.6 CBOM + Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install liboqs system library
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y cmake ninja-build libssl-dev
+          git clone --depth 1 --branch 0.12.0 https://github.com/open-quantum-safe/liboqs.git
+          cmake -S liboqs -B liboqs/build -GNinja \
+            -DOQS_DIST_BUILD=ON \
+            -DBUILD_SHARED_LIBS=ON \
+            -DCMAKE_BUILD_TYPE=Release
+          sudo cmake --build liboqs/build --target install
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Verify liboqs installation
+        run: python verify_liboqs.py
+
+      - name: Run pytest — CycloneDX validation suite
+        run: pytest tests/test_cbom_validation.py -v --tb=short
+
+      - name: Generate CycloneDX 1.6 CBOM
+        run: |
+          mkdir -p results
+          python tools/cbom_scanner.py \
+            --target . \
+            --output results/cbom_cyclonedx_v1.6.json
+
+      - name: Upload CBOM as build artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cbom-cyclonedx-1.6
+          path: results/cbom_cyclonedx_v1.6.json
+          retention-days: 90
+
+      - name: Print CBOM summary
+        run: |
+          echo "=== CBOM Summary ==="
+          python -c "
+          import json
+          with open('results/cbom_cyclonedx_v1.6.json') as f:
+              cbom = json.load(f)
+          comps = cbom['components']
+          unsafe = [c for c in comps if c['cryptoProperties']['algorithmProperties']['nistQuantumSecurityLevel'] == 0]
+          safe   = [c for c in comps if c['cryptoProperties']['algorithmProperties']['nistQuantumSecurityLevel'] >  0]
+          print(f'Total findings : {len(comps)}')
+          print(f'NOT quantum-safe: {len(unsafe)}')
+          print(f'Quantum-safe   : {len(safe)}')
+          print(f'Serial         : {cbom[\"serialNumber\"]}')
+          print(f'Spec version   : {cbom[\"specVersion\"]}')
+          for c in unsafe:
+              print(f'  [UNSAFE] {c[\"name\"]:14s}  {c[\"evidence\"][\"occurrences\"][0][\"location\"]}')
+          "
