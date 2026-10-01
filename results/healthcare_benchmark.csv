@@ -1,0 +1,7 @@
+use_case,algorithm,fips,type,security_level,keygen_ms,operation_ms,decap_ms,public_key_bytes,output_bytes,requirement,constraint,clinical_system,verify_ms
+EHR_TLS_Session,ML-KEM-768,203,KEM,L3,0.059,0.0134,0.0139,1184,1088,"Low latency, NIST Level 3 — matches current TLS security margin",Must fit TLS 1.3 handshake without fragmentation,Electronic Health Record portal (external-facing),
+Long_Term_Patient_Records,ML-KEM-1024,203,KEM,L5,0.0173,0.0175,0.02,1568,1568,"Maximum security — 10-year data retention, HNDL threat window",Storage overhead acceptable — used for archival key wrapping,"Patient record archive, pathology results (7–10yr retention)",
+Clinical_Code_Signing,ML-DSA-65,204,SIG,L3,0.0725,0.2688,,1952,3309,Software update verification — NIST Level 3,"Signature verified at boot/install, size less critical than IoT","Firmware signing for infusion pumps, imaging systems",0.065
+Medical_IoT_Auth,Falcon-512,206,SIG,L1,3.6225,0.1231,,897,655,Compact signature — bandwidth-constrained medical devices,"Infusion pumps, glucose monitors, sensors: packet budget <1KB",IoT medical device authentication over low-bandwidth channels,0.0193
+Root_CA_Certificate,ML-DSA-87,204,SIG,L5,0.1007,0.3408,,2592,4627,Maximum security — root CA certs valid 20 years,"Signed once, verified rarely — size irrelevant",Health district root certificate authority,0.1221
+Inter_Hospital_Key_Exchange,ML-KEM-768,203,KEM,L3,0.01,0.0106,0.0122,1184,1088,Secure channel for multi-hospital data sharing,Standard TLS channel — same constraints as EHR TLS,Cross-hospital research data sharing,

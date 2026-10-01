@@ -1,0 +1,37 @@
+[
+  {
+    "algorithm": "RSA-2048",
+    "file": "./examples/legacy_crypto_demo.py",
+    "line": 34,
+    "priority": "HIGH",
+    "scanner": "ast"
+  },
+  {
+    "algorithm": "ECDSA-P256",
+    "file": "./examples/legacy_crypto_demo.py",
+    "line": 55,
+    "priority": "HIGH",
+    "scanner": "ast"
+  },
+  {
+    "algorithm": "ECDH-P256",
+    "file": "./examples/legacy_crypto_demo.py",
+    "line": 63,
+    "priority": "HIGH",
+    "scanner": "ast"
+  },
+  {
+    "algorithm": "SHA-1",
+    "file": "./examples/legacy_crypto_demo.py",
+    "line": 73,
+    "priority": "HIGH",
+    "scanner": "ast"
+  },
+  {
+    "algorithm": "AES-256",
+    "file": "./examples/legacy_crypto_demo.py",
+    "line": 84,
+    "priority": "MEDIUM",
+    "scanner": "ast"
+  }
+]

@@ -1,0 +1,27 @@
+# govapi/crypto_config.yaml — HealthPQC v2.0
+# Crypto-agility config: swap algorithms by editing this file + SIGHUP
+#
+# Hot-swap demo:
+#   1. Change active_kem below
+#   2. kill -HUP $(pgrep -f 'govapi.app')
+#   3. curl http://localhost:8001/config → shows new algorithm
+#
+# No code changes, no restart, zero downtime.
+
+active_kem: ML-KEM-768     # FIPS 203, NIST Level 3 — default for TLS sessions
+active_sig: ML-DSA-65      # FIPS 204, NIST Level 3 — default for signing
+
+# Migration phase: hybrid | pqc-only | classical
+# hybrid  = X25519 + ML-KEM (recommended during transition)
+# pqc-only = ML-KEM only (post-CRQC)
+# classical = X25519 only (legacy — not recommended)
+migration_phase: hybrid
+
+# Fallback algorithms if primary not available
+fallback_kem: Kyber768
+fallback_sig: Falcon-512
+
+# Compliance metadata
+organisation: QuantumBank AU
+sector: banking
+compliance_target: APRA CPG-234 2030

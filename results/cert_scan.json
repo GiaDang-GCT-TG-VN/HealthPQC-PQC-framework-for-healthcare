@@ -1,0 +1,28 @@
+{
+  "generated": "2026-05-09T15:48:58.592421",
+  "scan_target": "/private/tmp",
+  "summary": {
+    "total_certs": 1,
+    "quantum_vulnerable": 1,
+    "critical": 0,
+    "high": 0,
+    "medium": 1
+  },
+  "certificates": [
+    {
+      "file": "/tmp/test.pem",
+      "subject": "O=HealthPQC,CN=test",
+      "issuer": "O=HealthPQC,CN=test",
+      "algorithm": "RSA-2048",
+      "key_type_family": "RSA",
+      "quantum_safe": false,
+      "days_remaining": 364,
+      "years_remaining": 1.0,
+      "not_valid_after": "2027-05-09T05:48:58+00:00",
+      "priority": "MEDIUM",
+      "urgency": "Include in planned migration \u2014 expires within 2 years",
+      "replacement": "ML-DSA-65 (signing) or ML-KEM-768 (encryption)",
+      "reason": "Broken by Shor's algorithm \u2014 all key sizes vulnerable"
+    }
+  ]
+}

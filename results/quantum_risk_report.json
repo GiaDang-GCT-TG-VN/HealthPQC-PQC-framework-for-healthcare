@@ -1,0 +1,94 @@
+{
+  "organisation": "QuantumBank AU (Demo)",
+  "sector": "banking",
+  "data_lifetime_years": 15,
+  "overall_risk": "CRITICAL",
+  "nearest_compliance_deadline": 2028,
+  "compliance_deadlines": {
+    "apra_cpg234": 2030,
+    "pci_dss": 2029,
+    "swift": 2030,
+    "austpaynet": 2028
+  },
+  "algorithms_assessed": [
+    {
+      "algorithm": "RSA-2048",
+      "base_risk": 90,
+      "data_lifetime_years": 15,
+      "lifetime_multiplier": 1.5,
+      "adjusted_risk_score": 100,
+      "severity": "CRITICAL",
+      "broken_by": "Shor",
+      "replacement": "ML-KEM-768",
+      "action": "Replace RSA-2048 immediately \u2014 HNDL attack viable today"
+    },
+    {
+      "algorithm": "ECDH",
+      "base_risk": 90,
+      "data_lifetime_years": 15,
+      "lifetime_multiplier": 1.5,
+      "adjusted_risk_score": 100,
+      "severity": "CRITICAL",
+      "broken_by": "Shor",
+      "replacement": "ML-KEM-768",
+      "action": "Replace ECDH immediately \u2014 HNDL attack viable today"
+    },
+    {
+      "algorithm": "AES-128",
+      "base_risk": 40,
+      "data_lifetime_years": 15,
+      "lifetime_multiplier": 1.5,
+      "adjusted_risk_score": 60,
+      "severity": "HIGH",
+      "broken_by": "Grover (128\u219264 bits)",
+      "replacement": "AES-256",
+      "action": "Replace AES-128 within 12 months \u2014 HNDL risk active"
+    },
+    {
+      "algorithm": "SHA-256",
+      "base_risk": 20,
+      "data_lifetime_years": 15,
+      "lifetime_multiplier": 1.5,
+      "adjusted_risk_score": 30,
+      "severity": "LOW",
+      "broken_by": "Grover (256\u2192128 bits)",
+      "replacement": "SHA-384",
+      "action": "Monitor SHA-256 \u2014 review at next architecture cycle"
+    },
+    {
+      "algorithm": "RSA-4096",
+      "base_risk": 75,
+      "data_lifetime_years": 15,
+      "lifetime_multiplier": 1.5,
+      "adjusted_risk_score": 100,
+      "severity": "CRITICAL",
+      "broken_by": "Shor",
+      "replacement": "ML-KEM-1024",
+      "action": "Replace RSA-4096 immediately \u2014 HNDL attack viable today"
+    },
+    {
+      "algorithm": "AES-256",
+      "base_risk": 0,
+      "data_lifetime_years": 15,
+      "adjusted_risk_score": 0,
+      "severity": "SAFE",
+      "broken_by": "N/A",
+      "replacement": "No change required",
+      "action": "Quantum-safe \u2014 no migration needed"
+    },
+    {
+      "algorithm": "ML-KEM-768",
+      "base_risk": 0,
+      "data_lifetime_years": 15,
+      "adjusted_risk_score": 0,
+      "severity": "SAFE",
+      "broken_by": "N/A",
+      "replacement": "No change required",
+      "action": "Quantum-safe \u2014 no migration needed"
+    }
+  ],
+  "critical_count": 3,
+  "high_count": 1,
+  "medium_count": 0,
+  "recommendation": "Immediate migration required \u2014 data already exposed to HNDL attacks"
+}

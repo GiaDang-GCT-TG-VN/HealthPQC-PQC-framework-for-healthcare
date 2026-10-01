@@ -1,0 +1,169 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:abbb32ea-7706-48f1-86a3-0dc471c385be",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-10-01T17:55:42.419536+00:00",
+    "tools": [
+      {
+        "type": "application",
+        "name": "HealthPQC",
+        "version": "2.0.0",
+        "description": "Post-Quantum Cryptography scanner for healthcare and enterprise infrastructure",
+        "externalReferences": [
+          {
+            "type": "vcs",
+            "url": "https://github.com/GiaDang-GCT-TG-VN/HealthPQC-PQC-framework-for-healthcare"
+          }
+        ]
+      }
+    ],
+    "component": {
+      "type": "application",
+      "name": "HealthPQC-PQC-framework-for-healthcare"
+    }
+  },
+  "components": [
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a07fb8bc-5195-4871-8b39-695506a1b94a",
+      "name": "RSA-2048",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "asymmetric-encryption",
+          "parameterSetIdentifier": "2048",
+          "executionEnvironment": "software",
+          "implementationPlatform": "unknown",
+          "certificationLevel": [],
+          "classicalSecurityLevel": 112,
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": ""
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "./examples/legacy_crypto_demo.py",
+            "line": "34",
+            "confidence": 1.0,
+            "additionalContext": "rsa.generate_private_key(...)"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "85c9f0e5-c827-4124-b084-ea196ca6cddc",
+      "name": "ECDSA-P256",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "signature",
+          "parameterSetIdentifier": "P-256",
+          "executionEnvironment": "software",
+          "implementationPlatform": "unknown",
+          "certificationLevel": [],
+          "classicalSecurityLevel": 128,
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": ""
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "./examples/legacy_crypto_demo.py",
+            "line": "55",
+            "confidence": 1.0,
+            "additionalContext": "ec.generate_private_key(...)"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "e0e888b7-9cc6-49b1-942c-cec9ae8c9ca9",
+      "name": "ECDH-P256",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "key-agree",
+          "parameterSetIdentifier": "P-256",
+          "executionEnvironment": "software",
+          "implementationPlatform": "unknown",
+          "certificationLevel": [],
+          "classicalSecurityLevel": 128,
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": ""
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "./examples/legacy_crypto_demo.py",
+            "line": "63",
+            "confidence": 1.0,
+            "additionalContext": "ec.generate_private_key(...)"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "c5c3bdc1-91dc-4a7a-b027-cd37ff81bae2",
+      "name": "SHA-1",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "hash",
+          "parameterSetIdentifier": "160",
+          "executionEnvironment": "software",
+          "implementationPlatform": "unknown",
+          "certificationLevel": [],
+          "classicalSecurityLevel": 80,
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": ""
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "./examples/legacy_crypto_demo.py",
+            "line": "73",
+            "confidence": 1.0,
+            "additionalContext": "hashlib.sha1(...)"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "3fa4abdd-4cba-4e4a-90f6-71ada9968400",
+      "name": "AES-256",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "block-cipher",
+          "parameterSetIdentifier": "256",
+          "executionEnvironment": "software",
+          "implementationPlatform": "unknown",
+          "certificationLevel": [],
+          "classicalSecurityLevel": 256,
+          "nistQuantumSecurityLevel": 1
+        },
+        "oid": ""
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "./examples/legacy_crypto_demo.py",
+            "line": "84",
+            "confidence": 1.0,
+            "additionalContext": "algorithms.AES256(...)"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+name: Generate CBOM
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  cbom:
+    name: CycloneDX 1.6 CBOM + Tests
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install system build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y \
+            cmake ninja-build libssl-dev \
+            python3-dev build-essential pkg-config
+
+      - name: Build and install liboqs C library
+        run: |
+          git clone --depth 1 \
+            https://github.com/open-quantum-safe/liboqs.git \
+            --branch main /tmp/liboqs
+          cmake -S /tmp/liboqs -B /tmp/liboqs/build \
+            -GNinja \
+            -DOQS_DIST_BUILD=ON \
+            -DBUILD_SHARED_LIBS=ON \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DOQS_USE_OPENSSL=ON
+          sudo cmake --build /tmp/liboqs/build --target install -- -j$(nproc)
+          sudo ldconfig
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Install liboqs-python from GitHub main to match C library version
+          pip install git+https://github.com/open-quantum-safe/liboqs-python.git
+          pip install \
+            fastapi==0.115.0 \
+            uvicorn==0.32.0 \
+            pyyaml==6.0.2 \
+            requests==2.32.3 \
+            pytest==8.3.3 \
+            pytest-cov==5.0.0 \
+            "numpy<2"
+
+      - name: Verify liboqs Python binding
+        run: |
+          python -c "
+          import oqs
+          version = getattr(oqs, '__version__', 'unknown')
+          print(f'liboqs-python version: {version}')
+          kems = oqs.get_enabled_kem_mechanisms()
+          sigs = oqs.get_enabled_sig_mechanisms()
+          assert 'ML-KEM-768' in kems, 'ML-KEM-768 missing'
+          assert 'ML-DSA-65'  in sigs, 'ML-DSA-65 missing'
+          print(f'OK: {len(kems)} KEMs, {len(sigs)} SIGs available')
+          "
+
+      - name: Run pytest — CycloneDX validation suite
+        run: pytest tests/test_cbom_validation.py -v --tb=short
+
+      - name: Generate CycloneDX 1.6 CBOM
+        run: |
+          mkdir -p results
+          python tools/cbom_scanner.py \
+            --target . \
+            --output results/cbom_cyclonedx_v1.6.json
+
+      - name: Print CBOM summary
+        run: |
+          python - <<'EOF'
+          import json, sys
+          try:
+              with open('results/cbom_cyclonedx_v1.6.json') as f:
+                  cbom = json.load(f)
+              comps  = cbom['components']
+              unsafe = [c for c in comps if c['cryptoProperties']['algorithmProperties']['nistQuantumSecurityLevel'] == 0]
+              safe   = [c for c in comps if c['cryptoProperties']['algorithmProperties']['nistQuantumSecurityLevel'] >  0]
+              print('='*55)
+              print('CBOM SUMMARY — HealthPQC CycloneDX 1.6')
+              print('='*55)
+              print(f'Serial:           {cbom["serialNumber"]}')
+              print(f'Total findings:   {len(comps)}')
+              print(f'NOT quantum-safe: {len(unsafe)}')
+              print(f'Quantum-safe:     {len(safe)}')
+              for c in unsafe[:10]:
+                  print(f'  [UNSAFE] {c["name"]:14s}  {c["evidence"]["occurrences"][0]["location"]}')
+              print('='*55)
+          except Exception as e:
+              print(f'Summary error (non-fatal): {e}')
+          EOF
+
+      - name: Upload CBOM artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cbom-cyclonedx-1.6
+          path: results/cbom_cyclonedx_v1.6.json
+          retention-days: 90
