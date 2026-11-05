@@ -55,7 +55,7 @@ PQC shares its lattice hardness assumptions with classical homomorphic encryptio
 | **Lattice problems** | Short vector hardness → encryption security | Circuit evaluation on encrypted integers |
 | **Quantum one-time pad** | Not used in PQC | Core of QHE-CCZ protocol (PhD research) |
 
-**This is why QHE research is not merely adjacent to PQC work — it is foundational to the next layer of the privacy stack.**
+PQC and QHE are complementary: PQC protects data in transit and at rest; QHE targets data during computation.
 
 ---
 
