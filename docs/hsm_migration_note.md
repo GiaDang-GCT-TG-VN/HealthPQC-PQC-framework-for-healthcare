@@ -5,7 +5,7 @@
 | Component | Location | Purpose |
 |-----------|----------|---------|
 | Algorithm benchmarking | `benchmarks/` | ML-KEM, ML-DSA, Falcon performance data |
-| Hybrid TLS key exchange | `tls/` | X25519 + ML-KEM-768 latency comparison |
+| Hybrid key exchange | `tls/` | X25519 + ML-KEM-768 latency comparison |
 | Certificate lifecycle | `tools/pqc_pki_demo.py` | Root → Intermediate → Leaf chain |
 | Crypto-agility API | `govapi/` | Zero-downtime algorithm swap via SIGHUP |
 | Crypto inventory | `tools/cbom_scanner.py` | CycloneDX 1.6 CBOM generation |

@@ -62,12 +62,12 @@ Hybrid PQC key exchange (X25519 + ML-KEM-768) can be deployed on healthcare TLS 
 
 | Endpoint | P50 (ms) | P95 (ms) | P99 (ms) | Max (ms) | RPS |
 |----------|----------|----------|----------|----------|-----|
-| /classical | 3 | 26 | 71 | 160 | 1003 |
+| /classical | 3 | 26 | 72 | 160 | 1003 |
 | /pqc-only | 3 | 26 | 70 | 160 | 1010 |
-| /hybrid | 4 | 26 | 71 | 161 | 996 |
+| /hybrid | 4 | 26 | 72 | 161 | 996 |
 | **Delta: hybrid vs classical** | **+1** | **0** | **0** | **+1** | |
 
-**Total requests at 1000 users: 180,423 | Failures: 0 (0%)**
+**Total requests at 1000 users: 178,149 | Failures: 0 (0%)** (`load_test/results/load_1000_stats.csv`)
 
 ---
 
@@ -85,8 +85,8 @@ Measured results from ARM64 benchmarking:
 - Key material increase: +2272B per handshake
 
 **Load test at 1000 concurrent users:**
-- Hybrid P99: 71ms vs Classical P99: 71ms — **zero difference**
-- 180,423 total requests with **0 failures**
+- Hybrid P99: 72 ms vs Classical P99: 72 ms — **zero difference** (`load_test/results/load_1000_stats.csv`)
+- 178,149 total requests with **0 failures**
 - RPS nearly identical: 996 (hybrid) vs 1003 (classical)
 
 For an EHR portal with an SLA of sub-100ms response time, hybrid PQC is statistically indistinguishable from classical at production load.

@@ -9,7 +9,7 @@
 # PQC core
 liboqs-python==0.14.0
 
-# Classical crypto (for X25519, HKDF in hybrid TLS)
+# Classical crypto (for X25519, HKDF in hybrid key exchange)
 cryptography==43.0.3
 
 # API + load testing
