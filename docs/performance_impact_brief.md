@@ -7,9 +7,9 @@ Prepared: May 2026 | Platform: Apple Silicon ARM64 (M-series) | Methodology: 100
 
 ## Executive summary
 
-Hybrid PQC key exchange (X25519 + ML-KEM-768) can be deployed on healthcare TLS endpoints with negligible performance impact. Single-operation P99 latency overhead versus classical X25519 is **+0.162ms** — well within acceptable SLA tolerance for EHR portal operation.
+Hybrid PQC key exchange (X25519 + ML-KEM-768) can be deployed on healthcare TLS endpoints with negligible performance impact. Single-operation P99 latency overhead versus classical X25519 is **+0.2008 ms** — well within acceptable SLA tolerance for EHR portal operation.
 
-**Surprising finding**: PQC-only ML-KEM-768 (0.045ms) is actually **5× faster** than classical X25519 (0.256ms) on ARM64. Lattice arithmetic is cheaper than elliptic curve operations on Apple Silicon.
+**Surprising finding**: PQC-only ML-KEM-768 (0.0422 ms) is actually **about 6× faster** than classical X25519 (0.2529 ms) on ARM64. Lattice arithmetic is cheaper than elliptic curve operations on Apple Silicon.
 
 **Recommendation**: A reasonable recommendation would be to proceed with hybrid TLS deployment on all external-facing EHR endpoints. The operational cost is negligible; the HNDL risk reduction is immediate and significant.
 
@@ -35,10 +35,12 @@ Hybrid PQC key exchange (X25519 + ML-KEM-768) can be deployed on healthcare TLS 
 
 | Scenario | Average (ms) | P50 (ms) | P95 (ms) | P99 (ms) | Key Material (B) |
 |----------|-------------|----------|----------|----------|-----------------|
-| Classical (X25519) | 0.256 | 0.241 | 0.290 | 0.327 | 64 |
-| PQC only (ML-KEM-768) | 0.045 | 0.042 | 0.052 | 0.064 | 2272 (1184+1088) |
-| Hybrid (X25519+ML-KEM-768) | 0.384 | 0.379 | 0.436 | 0.489 | 2336 |
-| **Hybrid overhead vs classical** | **+0.128** | **+0.138** | **+0.146** | **+0.162** | |
+| Classical (X25519) | 0.2529 | 0.2407 | 0.2576 | 0.2926 | 64 |
+| PQC only (ML-KEM-768) | 0.0422 | 0.0415 | 0.0435 | 0.0474 | 2272 (1184+1088) |
+| Hybrid (X25519+ML-KEM-768) | 0.383 | 0.3768 | 0.3993 | 0.4934 | 2336 |
+| **Hybrid overhead vs classical** | **+0.1301** | **+0.1361** | **+0.1417** | **+0.2008** | |
+
+*Values from `results/hybrid_keyx_benchmark.csv` (single run, Apple Silicon).*
 
 ### Load test results — 100 concurrent users
 

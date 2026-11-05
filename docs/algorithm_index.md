@@ -21,8 +21,8 @@ Three dimensions drive every decision:
 | Algorithm | FIPS | Security Level | Public Key (B) | Ciphertext (B) | KeyGen (ms) | Encap (ms) | Fully PQ Safe | Hybrid Option | Recommended Use Case |
 |-----------|------|---------------|---------------|----------------|-------------|------------|---------------|---------------|---------------------|
 | ML-KEM-512 | 203 | L1 (AES-128) | 800 | 768 | 0.021 | 0.024 | ✅ Yes | X25519+ML-KEM-512 | Low-latency TLS, short-lived sessions |
-| ML-KEM-768 | 203 | L3 (AES-192) | 1184 | 1088 | 0.022 | 0.013 | ✅ Yes | X25519+ML-KEM-768 | **Enterprise TLS — primary recommendation** |
-| ML-KEM-1024 | 203 | L5 (AES-256) | 1568 | 1568 | 0.016 | 0.016 | ✅ Yes | X25519+ML-KEM-1024 | Long-term data (7-10yr retention), root key wrapping |
+| ML-KEM-768 | 203 | L3 (AES-192) | 1184 | 1088 | 0.059 | 0.0134 | ✅ Yes | X25519+ML-KEM-768 | **Enterprise TLS — primary recommendation** |
+| ML-KEM-1024 | 203 | L5 (AES-256) | 1568 | 1568 | 0.0173 | 0.0175 | ✅ Yes | X25519+ML-KEM-1024 | Long-term data (7-10yr retention), root key wrapping |
 | HQC-128 | TBD | L1 | Large | Large | Slower | Slower | ✅ Yes | — | ML-KEM backup — code-based assumption (different math) |
 | HQC-192 | TBD | L3 | Large | Large | Slower | Slower | ✅ Yes | — | ML-KEM backup at Level 3 |
 | HQC-256 | TBD | TBD | Large | Large | Slower | Slower | ✅ Yes | — | ML-KEM backup at Level 5 |
@@ -55,10 +55,10 @@ Question 3: Is bandwidth severely constrained?
 | Algorithm | FIPS | Security Level | Public Key (B) | Signature (B) | KeyGen (ms) | Sign (ms) | Verify (ms) | Fully PQ Safe | Recommended Use Case |
 |-----------|------|---------------|---------------|---------------|-------------|-----------|-------------|---------------|---------------------|
 | ML-DSA-44 | 204 | L2 | 1312 | 2420 | 0.062 | 0.095 | 0.051 | ✅ Yes | Short-lived tokens, API auth, session signatures |
-| ML-DSA-65 | 204 | L3 (AES-192) | 1952 | 3309 | 0.072 | 0.272 | 0.072 | ✅ Yes | **Code signing, TLS certs, PKI — primary recommendation** |
-| ML-DSA-87 | 204 | L5 (AES-256) | 2592 | 4627 | 0.102 | 0.320 | 0.098 | ✅ Yes | Root CA certificates (20yr validity), critical PKI |
-| Falcon-512 | 206 | L1 | 897 | 656 | 3.726 | 0.122 | 0.3 | ✅ Yes | **Medical IoT — most compact sig, 5× smaller than ML-DSA** |
-| Falcon-1024 | 206 | L5 | 1793 | ~1280 | 18.4 | 1.6 | 0.6 | ✅ Yes | High-security IoT, constrained devices needing L5 |
+| ML-DSA-65 | 204 | L3 (AES-192) | 1952 | 3309 | 0.0725 | 0.2688 | 0.065 | ✅ Yes | **Code signing, TLS certs, PKI — primary recommendation** |
+| ML-DSA-87 | 204 | L5 (AES-256) | 2592 | 4627 | 0.1007 | 0.3408 | 0.1221 | ✅ Yes | Root CA certificates (20yr validity), critical PKI |
+| Falcon-512 | draft 206 (FN-DSA) | L1 | 897 | about 655 | 3.6225 | 0.1231 | 0.0193 | ✅ Yes | **Medical IoT — most compact sig, 5× smaller than ML-DSA** |
+| Falcon-1024 | draft 206 (FN-DSA) | L5 | 1793 | ~1280 | 18.4 | 1.6 | 0.6 | ✅ Yes | High-security IoT, constrained devices needing L5 |
 | SLH-DSA-128s | 205 | L1 | 32 | 7856 | Fast | Very slow | Fast | ✅ Yes | Stateless — no key state management; large sigs |
 | SLH-DSA-256s | 205 | L5 | 64 | 29792 | Fast | Very slow | Fast | ✅ Yes | Maximum security stateless — very large sigs |
 | ECDSA-P256 | — | Classical | 64 | 64 | 0.003 | 0.005 | 0.004 | ❌ No | **MIGRATE — all current TLS certs use this** |
