@@ -262,15 +262,13 @@ This project complements PhD research in **Quantum Homomorphic Encryption (QHE)*
 | **PQC** | In transit and at rest | Migration required by 2030-2035 |
 | **QHE** | During computation | Research frontier (5-10 years) |
 
-Both share mathematical foundations in **lattice problems** (LWE/RLWE hardness assumptions).
-
 ---
 
 ## Author & Context
 
 - **Author:** Gia Dang, PhD candidate, Western Sydney University
-- **Research area:** Lattice-based Quantum Homomorphic Encryption (QHE) for healthcare data privacy
-- **Academic Validation:** 2 IEEE publications in lattice-based QHE
+- **Research area:** Quantum Homomorphic Encryption (QHE) for healthcare data privacy
+- **Academic Validation:** 2 IEEE publications in Quantum Homomorphic Encryption (QHE)
 - **Contact:** 22040062@student.westernsydney.edu.au
 
 > **Disclaimer**

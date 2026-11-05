@@ -6,7 +6,7 @@
 
 ## Abstract
 
-Post-quantum cryptography (PQC) addresses the urgent migration problem: replacing RSA, ECDH, and ECDSA with quantum-resistant algorithms before cryptographically relevant quantum computers arrive. Quantum Homomorphic Encryption (QHE) addresses the next frontier: allowing servers to compute on encrypted data without ever decrypting it. These two technologies are not competing approaches — they solve different problems and together form a complete privacy stack. PQC secures data in transit and at rest. QHE secures data *while it is being processed*. This paper outlines the relationship between these fields, the shared mathematical foundations, and the roadmap from PQC migration today to QHE integration in the 5–10 year horizon.
+Post-quantum cryptography (PQC) addresses the urgent migration problem: replacing RSA, ECDH, and ECDSA with quantum-resistant algorithms before cryptographically relevant quantum computers arrive. Quantum Homomorphic Encryption (QHE) addresses the next frontier: allowing servers to compute on encrypted data without ever decrypting it. These two technologies are not competing approaches — they solve different problems and together form a complete privacy stack. PQC secures data in transit and at rest. QHE secures data *while it is being processed*. This paper outlines the relationship between these fields, the mathematical foundations of each, and the roadmap from PQC migration today to QHE integration in the 5–10 year horizon.
 
 ---
 
@@ -44,18 +44,16 @@ This is not achievable with PQC alone.
 
 ---
 
-## 3. Shared mathematical foundations
+## 3. Mathematical foundations
 
-Both PQC and QHE are grounded in the same hardness assumptions:
+PQC shares its lattice hardness assumptions with classical homomorphic encryption (FHE):
 
-| Foundation | PQC Application | QHE Application |
-|------------|----------------|-----------------|
+| Foundation | PQC Application | Homomorphic encryption application |
+|------------|----------------|------------------------------------|
 | **Module-LWE** | ML-KEM key structure; ML-DSA commitment scheme | Lattice-based FHE schemes (BFV, CKKS, BGV) |
 | **RLWE (Ring-LWE)** | Kyber/Dilithium algebraic structure | Ring-based homomorphic encryption |
 | **Lattice problems** | Short vector hardness → encryption security | Circuit evaluation on encrypted integers |
 | **Quantum one-time pad** | Not used in PQC | Core of QHE-CCZ protocol (PhD research) |
-
-A researcher or practitioner who understands LWE and RLWE at depth can work across both fields. The PhD research in QHE-CCZ provides precisely this depth — the same mathematical fluency that informs PQC algorithm selection also enables QHE protocol design.
 
 **This is why QHE research is not merely adjacent to PQC work — it is foundational to the next layer of the privacy stack.**
 
