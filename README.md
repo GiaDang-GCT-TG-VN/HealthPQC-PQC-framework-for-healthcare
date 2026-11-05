@@ -41,7 +41,7 @@ algorithm in use on the next run — no code changes, no redeploy of application
 | Component | Purpose | Output |
 |-----------|---------|--------|
 | **Algorithm Benchmarks** | Performance testing of NIST-standardized PQC algorithms | Real ARM64 timing data for ML-KEM, ML-DSA, Falcon |
-| **Hybrid TLS Demo** | X25519 + ML-KEM-768 combined key exchange | Latency comparison: classical vs hybrid vs PQC-only |
+| **Hybrid Key Exchange Demo** | X25519 + ML-KEM-768 combined key exchange | Latency comparison: classical vs hybrid vs PQC-only |
 | **CBOM Scanner** | Crypto-inventory tool using AST analysis | JSON report of quantum-vulnerable dependencies |
 | **Certificate Scanner** | PKI audit for RSA/ECDSA certificates | Identifies certificates needing PQC replacement |
 | **Crypto-Agility Engine** | Algorithm-as-config pattern demo | YAML-driven algorithm switching |
@@ -63,7 +63,7 @@ algorithm in use on the next run — no code changes, no redeploy of application
 | **ML-DSA-65** | FIPS 204 | 0.072 | 1,952 | 3,309 | Clinical code signing |
 | **Falcon-512** | draft FIPS 206 (FN-DSA) | 3.726 | 897 | 656 | Medical IoT authentication |
 
-### Hybrid TLS Performance
+### Hybrid Key Exchange Performance
 
 | Mode | Avg Latency (ms) | P99 at 1000 Users |
 |------|------------------|-------------------|
@@ -156,7 +156,7 @@ Tests **all 94 algorithms** in liboqs:
 - 68 Digital Signature algorithms
 - Outputs: keygen time, encap/decap or sign/verify time, key sizes
 
-### 3. Hybrid TLS Benchmark (`tls/hybrid_keyx_benchmark.py`)
+### 3. Hybrid Key Exchange Benchmark (`tls/hybrid_keyx_benchmark.py`)
 Compares three key exchange modes:
 - **Classical:** X25519 only
 - **PQC-only:** ML-KEM-768 only
