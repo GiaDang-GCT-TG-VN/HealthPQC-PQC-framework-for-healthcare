@@ -61,7 +61,7 @@ algorithm in use on the next run — no code changes, no redeploy of application
 | **ML-KEM-768** | FIPS 203 | 0.022 | 1,184 | 1,088 | EHR TLS sessions (NIST Level 3) |
 | **ML-KEM-1024** | FIPS 203 | 0.016 | 1,568 | 1,568 | Long-term patient data (NIST Level 5) |
 | **ML-DSA-65** | FIPS 204 | 0.072 | 1,952 | 3,309 | Clinical code signing |
-| **Falcon-512** | FIPS 206 | 3.726 | 897 | 656 | Medical IoT authentication |
+| **Falcon-512** | draft FIPS 206 (FN-DSA) | 3.726 | 897 | 656 | Medical IoT authentication |
 
 ### Hybrid TLS Performance
 
@@ -217,7 +217,7 @@ FastAPI + Locust testing at scale:
 ## Technology Stack
 
 - **PQC Library:** liboqs 0.14.0 (Open Quantum Safe)
-- **Algorithms:** ML-KEM (FIPS 203), ML-DSA (FIPS 204), Falcon (FIPS 206)
+- **Algorithms:** ML-KEM (FIPS 203), ML-DSA (FIPS 204), Falcon — draft FIPS 206 (FN-DSA)
 - **Classical Crypto:** cryptography library (X25519, HKDF)
 - **Web Framework:** FastAPI + Uvicorn
 - **Load Testing:** Locust

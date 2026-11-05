@@ -48,7 +48,7 @@ ALGO_META = {
     "ML-DSA-44":  {"primitive": "signature", "paramSet": "44", "classicalBits": 128, "nistLevel": 2},
     "ML-DSA-65":  {"primitive": "signature", "paramSet": "65", "classicalBits": 178, "nistLevel": 3},
     "ML-DSA-87":  {"primitive": "signature", "paramSet": "87", "classicalBits": 220, "nistLevel": 5},
-    # NIST FIPS 206 — Falcon
+    # NIST draft FIPS 206 (FN-DSA) — Falcon
     "Falcon-512":  {"primitive": "signature", "paramSet": "512",  "classicalBits": 103, "nistLevel": 1},
     "Falcon-1024": {"primitive": "signature", "paramSet": "1024", "classicalBits": 230, "nistLevel": 5},
     # NIST FIPS 205 — SLH-DSA

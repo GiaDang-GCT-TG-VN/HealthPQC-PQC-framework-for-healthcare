@@ -33,7 +33,7 @@ Nation-state adversaries are operating "harvest now, decrypt later" programmes �
 A set of NIST-standardised mathematical algorithms that are believed to be hard for both classical and quantum computers to break. The primary standards are:
 - **ML-KEM (FIPS 203)** — replaces ECDH in TLS key exchange
 - **ML-DSA (FIPS 204)** — replaces ECDSA in certificates and code signing
-- **Falcon/FN-DSA (FIPS 206)** — compact signatures for IoT medical devices
+- **Falcon — draft FIPS 206 (FN-DSA)** — compact signatures for IoT medical devices
 
 **What it is not:**  
 - A silver bullet that requires replacing everything simultaneously

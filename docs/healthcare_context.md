@@ -124,7 +124,7 @@ The algorithms are no longer a research question. NIST finalised the core set:
 | FIPS 203 | ML-KEM (Kyber) | Key encapsulation — replaces ECDH/RSA key exchange |
 | FIPS 204 | ML-DSA (Dilithium) | Digital signatures — general purpose |
 | FIPS 205 | SLH-DSA (SPHINCS+) | Hash-based signatures — conservative, firmware/root signing |
-| FIPS 206 (draft) | FN-DSA (Falcon) | Compact signatures — constrained devices |
+| draft FIPS 206 (FN-DSA) | Falcon | Compact signatures — constrained devices |
 
 Public guidance converges on a similar shape: build a cryptographic inventory, prioritise by
 data confidentiality lifetime, deploy hybrid key exchange on high-value traffic first, and

@@ -133,7 +133,7 @@ Question 3: Is implementation side-channel resistance critical?
 | ML-KEM | FIPS 203 | ✅ Final (August 2024) | csrc.nist.gov/pubs/fips/203/final |
 | ML-DSA | FIPS 204 | ✅ Final (August 2024) | csrc.nist.gov/pubs/fips/204/final |
 | SLH-DSA | FIPS 205 | ✅ Final (August 2024) | csrc.nist.gov/pubs/fips/205/final |
-| FN-DSA (Falcon) | FIPS 206 | ✅ Final (August 2024) | csrc.nist.gov/pubs/fips/206/final |
+| FN-DSA (Falcon) | draft FIPS 206 (FN-DSA) | Draft, not yet published | no final page yet |
 | HQC | TBD | 🔄 Selected March 2025 — standardisation in progress | Backup KEM for ML-KEM |
 
 ---

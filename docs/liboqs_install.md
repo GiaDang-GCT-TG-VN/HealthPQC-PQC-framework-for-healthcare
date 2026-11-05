@@ -12,7 +12,7 @@ Memorise these three lines. They will be asked in any quantum safety interview:
 ```
 FIPS 203 = ML-KEM (Kyber)   — key exchange, replaces RSA/ECDH in TLS
 FIPS 204 = ML-DSA (Dilithium) — signatures, replaces ECDSA in PKI
-FIPS 206 = FN-DSA (Falcon)  — compact signatures, replaces ECDSA on IoT devices
+draft FIPS 206 (FN-DSA) = Falcon  — compact signatures, replaces ECDSA on IoT devices
 ```
 
 **Crypto-agility** = the ability to swap cryptographic algorithms without rebuilding the system.  
@@ -240,7 +240,7 @@ print('  ML-DSA-44   present:', 'ML-DSA-44'   in sigs)
 print('  ML-DSA-65   present:', 'ML-DSA-65'   in sigs)
 print('  ML-DSA-87   present:', 'ML-DSA-87'   in sigs)
 print()
-print('FIPS 206 check:')
+print('draft FIPS 206 (FN-DSA) check:')
 print('  Falcon-512  present:', 'Falcon-512'  in sigs)
 print('  Falcon-1024 present:', 'Falcon-1024' in sigs)
 print()
@@ -263,7 +263,7 @@ FIPS 204 check:
   ML-DSA-65   present: True
   ML-DSA-87   present: True
 
-FIPS 206 check:
+draft FIPS 206 (FN-DSA) check:
   Falcon-512  present: True
   Falcon-1024 present: True
 
@@ -383,4 +383,4 @@ python benchmarks/healthcare_benchmark.py
 - [liboqs getting started](https://openquantumsafe.org/liboqs/getting-started.html)
 - [NIST FIPS 203](https://csrc.nist.gov/pubs/fips/203/final)
 - [NIST FIPS 204](https://csrc.nist.gov/pubs/fips/204/final)
-- [NIST FIPS 206](https://csrc.nist.gov/pubs/fips/206/final)
+- NIST draft FIPS 206 (FN-DSA): not yet published (no csrc.nist.gov/pubs/fips/206 page as of 2026-11-05)
