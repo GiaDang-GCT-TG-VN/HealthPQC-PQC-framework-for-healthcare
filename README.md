@@ -63,9 +63,10 @@ algorithm in use on the next run — no code changes, no redeploy of application
 | **ML-KEM-768** | FIPS 203 | 0.059 | 1,184 | 1,088 | EHR TLS Session (NIST L3) |
 | **ML-KEM-1024** | FIPS 203 | 0.0173 | 1,568 | 1,568 | Long Term Patient Records (NIST L5) |
 | **ML-DSA-65** | FIPS 204 | 0.0725 | 1,952 | 3,309 | Clinical Code Signing (NIST L3) |
-| **Falcon-512** | draft FIPS 206 (FN-DSA) | 3.6225 | 897 | about 655 | Medical IoT Auth (NIST L1) |
 | **ML-DSA-87** | FIPS 204 | 0.1007 | 2,592 | 4,627 | Root CA Certificate (NIST L5) |
-| **ML-KEM-768** | FIPS 203 | 0.01 | 1,184 | 1,088 | Inter Hospital Key Exchange (NIST L3) |
+| **Falcon-512** | draft FIPS 206 (FN-DSA) | 3.6225 | 897 | about 655 | Medical IoT Auth (NIST L1) |
+
+ML-KEM-768 keygen measured 0.01–0.059 ms across two single runs; timings below 0.1 ms are noisy.
 
 ### Hybrid Key Exchange Performance
 

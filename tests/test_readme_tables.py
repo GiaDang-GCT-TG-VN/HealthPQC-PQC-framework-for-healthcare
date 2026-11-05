@@ -16,3 +16,6 @@ def test_readme_tables_match_the_csvs():
     assert t.readme_section(text) == t.render(), "run: python tools/readme_perf_tables.py --write"
     assert "| **ML-KEM-768** | FIPS 203 | 0.059 |" in text
     assert "| **Falcon-512** | draft FIPS 206 (FN-DSA) | 3.6225 | 897 | about 655 |" in text
+    table = [l for l in t.algorithm_table() if l.startswith("| **")]
+    assert [l.split("**")[1] for l in table] == ["ML-KEM-768", "ML-KEM-1024", "ML-DSA-65", "ML-DSA-87", "Falcon-512"]
+    assert "ML-KEM-768 keygen measured 0.01–0.059 ms across two single runs; timings below 0.1 ms are noisy." in text

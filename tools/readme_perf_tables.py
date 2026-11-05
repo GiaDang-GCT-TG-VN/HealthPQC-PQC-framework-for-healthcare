@@ -3,7 +3,8 @@ tools/readme_perf_tables.py — HealthPQC v2.0
 Renders the README performance tables from the result CSVs, so every number in them is the
 CSV's own value (no rounding):
 
-  results/healthcare_benchmark.csv        -> Algorithm Performance (one row per use case)
+  results/healthcare_benchmark.csv        -> Algorithm Performance (one row per algorithm: its
+                                             first CSV row), plus the ML-KEM-768 keygen range
   results/hybrid_keyx_benchmark.csv       -> Hybrid Key Exchange Performance (avg_ms)
   load_test/results/load_1000_stats.csv   -> the "P99 at 1000 Users" column (99% column)
 
@@ -40,6 +41,10 @@ def _rows(path):
         return list(csv.DictReader(f))
 
 
+WORDS = {1: "one", 2: "two", 3: "three"}
+ORDER = ("ML-KEM-768", "ML-KEM-1024", "ML-DSA-65", "ML-DSA-87", "Falcon-512")     # README row order
+
+
 def _int(s):
     return f"{int(s):,}"
 
@@ -48,13 +53,21 @@ def algorithm_table():
     lines = ["### Algorithm Performance", "",
              "| Algorithm | NIST FIPS | KeyGen (ms) | Public Key (B) | Output (B) | Healthcare Use Case |",
              "|-----------|-----------|-------------|----------------|------------|---------------------|"]
-    for r in _rows(BENCH):
+    rows = _rows(BENCH)
+    first = {}
+    for r in rows:                                      # one row per algorithm: its first CSV row
+        first.setdefault(r["algorithm"], r)
+    for name in ORDER:
+        r = first[name]
         out = _int(r["output_bytes"])
         if r["algorithm"].startswith("Falcon"):
             out = f"about {out}"                        # Falcon signatures vary in length
         use = f"{r['use_case'].replace('_', ' ')} (NIST {r['security_level']})"
         lines.append(f"| **{r['algorithm']}** | {FIPS[r['fips']]} | {r['keygen_ms']} | "
                      f"{_int(r['public_key_bytes'])} | {out} | {use} |")
+    kg = sorted((float(r["keygen_ms"]), r["keygen_ms"]) for r in rows if r["algorithm"] == "ML-KEM-768")
+    lines += ["", f"ML-KEM-768 keygen measured {kg[0][1]}–{kg[-1][1]} ms across {WORDS.get(len(kg), len(kg))} "
+                  "single runs; timings below 0.1 ms are noisy."]
     return lines
 
 
